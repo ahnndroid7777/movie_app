@@ -49,18 +49,28 @@ class App extends Component {
    *    STEP 5. componentDidUpdate() : props 변경분에 대한 업데이트 완료
    */
 
-  componentWillMount() {
-    console.log('will mount.');    
+  // Mutate 대상이 되는 state 속성 선언
+  state = {
+    greeting: 'Hello!'
   }
-
+ 
+  /**
+   * Component가 렌더링을 끝낼때마다 5초 후에 greeting이라는 state 속성의 값을 변경
+   * 주의할 점은 state에 대한 변경은 this.state.*와 같이 직접적으로 액세스 불가하므로
+   * state 속성을 변경하려면 반드시 this.setState() 함수를 이용하여 변경해야 함!!!
+   */
   componentDidMount() {
-    console.log('did mount.');    
+    setTimeout(() => {
+      this.setState({
+        greeting: 'Hello again!'
+      })
+    }, 5000)
   }
 
   render() {
-    console.log('rendering...');
     return (
       <div className="App">
+        {this.state.greeting}
         {movies.map((movie, index) => {
           return <Movie title={movie.title} poster={movie.poster} key={index} />
         })}
