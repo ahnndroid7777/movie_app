@@ -31,44 +31,51 @@ class App extends Component {
    */
 
   // Mutate 대상이 되는 state 속성 선언
-  state = {
-  }
+  state = {}
  
   /**
-   * Component별 state 변경은 this.state.*와 같이 직접적인 액세스 변경은 불가!
-   * 반드시 this.setState() 함수를 이용하여 변경!!
-   * 
-   * 아래의 예는 자바스크립트에서 기본적으로 제공하는 타임아웃 함수를 이용하여
-   * setState함수를 이용하여 5초 후 새로운 영화 요소를 추가하는 코드임!!! 
+   * [ 비동기 웹 서비스 구현 - STEP 1 ]
+   * componentDidMount() 함수가 불리는 시점에 _getMovies() 함수 호출
    */
   componentDidMount() {
-    setTimeout(() => {
-      this.setState({
-        movies: [
-          {
-            title: "Peanuts",
-            poster: "http://img.insight.co.kr/static/2017/05/12/700/VXMV018Y66079T89DPR8.jpg"
-          },
-          {
-            title: "Bourne",
-            poster: "https://d3snydf0tiej89.cloudfront.net/wp-content/uploads/2013/01/bourne_identity1.jpg"
-          },
-          {
-            title: "Avengers",
-            poster: "https://fandomwire.com/wp-content/uploads/2018/05/marvel-avengers-4-title.jpg"
-          },
-          {
-            title: "John Wick",
-            poster: "https://img.maximummedia.ie/joe_ie/eyJkYXRhIjoie1widXJsXCI6XCJodHRwOlxcXC9cXFwvbWVkaWEtam9lLm1heGltdW1tZWRpYS5pZS5zMy5hbWF6b25hd3MuY29tXFxcL3dwLWNvbnRlbnRcXFwvdXBsb2Fkc1xcXC8yMDE4XFxcLzAxXFxcLzE5MjIwNDAzXFxcL2pvaG4td2ljay0zLTEwMjR4NTc2LmpwZ1wiLFwid2lkdGhcIjo3NjcsXCJoZWlnaHRcIjo0MzEsXCJkZWZhdWx0XCI6XCJodHRwczpcXFwvXFxcL3d3dy5qb2UuaWVcXFwvYXNzZXRzXFxcL2ltYWdlc1xcXC9qb2VcXFwvbm8taW1hZ2UucG5nP3Y9NVwifSIsImhhc2giOiI1MjcxMjFmMGQ1OWQ4ZTc2ZDE2OTc0MGQ5NzJjOWQ5MDY1ZDVlZmFiIn0=/john-wick-3-1024x576.jpg"
-          }
-        ]
-      })
-    }, 5000)
+    this._getMovies();
   }
 
+  /**
+   * [ 비동기 웹 서비스 구현 - STEP 2 ]
+   * 비동기 구현의 가장 중요 부분 => async / await 구문 활용부
+   * 
+   * _getMovies() 함수는 비동기 함수로써 호출되며,
+   * _callApi() 함수는 서버로부터 영화 목록 데이터를 조회해오는 API인데 await로 설정되어 있기 때문에
+   * 해당 API의 조회 결과가 반환 완료될 때까지 setState() 함수는 실행되지 않게 됨.
+   */
+  _getMovies = async () => {
+    const movies = await this._callApi()
+    this.setState({
+      // movies: movies (본 컴포넌트의 state에 _callApi() 함수를 통해 받아온 데이터를 movies 속성에 set)
+      movies
+    })
+  }
+
+  /**
+   * [ 비동기 웹 서비스 구현 - STEP 3 ]
+   * 서버로부터 영화 목록을 받아오는 API 요청/응답부
+   */
+  _callApi = () => {
+    return fetch('https://yts.am/api/v2/list_movies.json?sort_by=rating')
+            .then(res => res.json())
+            .then(json => json.data.movies)
+            .catch(err => console.log(err));
+  }
+
+  /**
+   * 최초 페이지 렌더링 또는 state의 속성 변화가 발생하여 render() 함수가 콜백 호출되면
+   * render() 함수에서 _renderMovies() 함수를 호출하여 서버로부터 가져온 영화 정보를 출력
+   */
   _renderMovies = () => {
-    const movies = this.state.movies.map((movie, index) => {
-      return <Movie title={movie.title} poster={movie.poster} key={index} />
+    const movies = this.state.movies.map((movie) => {
+      console.log(movie);
+      return <Movie title={movie.title} poster={movie.large_cover_image} key={movie.id} />
     })
 
     return movies;
