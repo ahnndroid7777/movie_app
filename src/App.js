@@ -83,11 +83,13 @@ class App extends Component {
 
   render() {
     /** 
-     * state 내에 movies 속성이 존재하지 않는 경우, Loading... 문자열 출력
-     * state 내에 movies 속성이 존재하는 경우, _renderMovies 함수를 호출하여 렌더링
+     * 본 컴포넌트의 state를 movies 변수에 셋팅 후
+     * movies에 속성값이 존재하면 App 클래스에 해당하는 CSS를, 
+     * movies가 존재하지 않는 경우 App--loading 클래스에 해당하는 CSS 효과 적용
      */
+    const { movies } = this.state;
     return (
-      <div className="App">
+      <div className={movies ? "App" : "App--loading"}>
         {this.state.movies ? this._renderMovies() : 'Loading...'}
       </div>
     );
