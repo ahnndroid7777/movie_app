@@ -17,36 +17,65 @@ import './Movie.css';
  * 
  * @param {*} param0 
  */
-function Movie({title, poster}) {
+function Movie({title, poster, genres, synopsis}) {
     return (
-        <div>
-            <MoviePoster poster={poster} />
-            <h1>{title}</h1>
+        <div className="Movie">
+            <div className="Movie__Columns">
+                <MoviePoster poster={poster} alt={title} />
+            </div>
+            <div className="Movie__Columns">
+                <h1>{title}</h1>
+                <div className="Movie__Genres">
+                    {genres.map((genre, index) => <MovieGenre genre={genre} key={index} />)}
+                </div>
+                <p className="Movie__Synopsis">
+                    {synopsis}
+                </p>
+            </div>
         </div>
     )
 }
 
-// Movie 컴포넌트(Dumb Component)에 props로 전달되는 poster 속성에 대한 validation 선언
-Movie.propTypes = {
-    title: PropTypes.string.isRequired,
-    poster: PropTypes.string.isRequired
-}
-
 /**
- * 여기서 MoviePoster 컴포넌트는 상위 컴포넌트(Movie)로부터 props를 통해 
- * poster 속성을 전달받았다고 간주할 수 있음!!!
+ * MoviePoster 컴포넌트는 상위 컴포넌트(Movie)로부터 props를 통해 포스터 관련 데이터 수신 및 맵핑
  * 
  * @param {*} param0 
  */
-function MoviePoster({poster}) {
+function MoviePoster({poster, alt}) {
     return (
-        <img src={poster} alt="Movie Poster" />
+        <img src={poster} alt={alt} title={alt} className="Movie__Poster" />
     )
+}
+
+/**
+ * MovieGenre 컴포넌트는 상위 컴포넌트(Movie)로부터 props를 통해 장르 관련 데이터 수신 및 맵핑
+ * 
+ * @param {*} param0 
+ */
+function MovieGenre({genre}) {
+    return (
+        <span className="Movie__Genre">{genre} </span>
+    )
+}
+
+
+// Movie 컴포넌트(Dumb Component)에 props로 전달되는 poster 속성에 대한 validation 선언
+Movie.propTypes = {
+    title: PropTypes.string.isRequired,
+    poster: PropTypes.string.isRequired,
+    genres: PropTypes.array,
+    synopsis: PropTypes.string.isRequired
 }
 
 // MoviePoster 컴포넌트(Dumb Component)에 props로 전달되는 poster 속성에 대한 validation 선언
 MoviePoster.propTypes = {
-    poster: PropTypes.string.isRequired
+    poster: PropTypes.string.isRequired,
+    alt: PropTypes.string.isRequired
+}
+
+// MovieGenre 컴포넌트에 props로 전달되는 genre 속성에 대한 validation 선언
+MovieGenre.propTypes = {
+    genre: PropTypes.string.isRequired
 }
 
 export default Movie;
